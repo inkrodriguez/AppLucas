@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
 
         var btnLogin = binding.btnLogin
+        var btnRegister = binding.btnRegister
 
         btnLogin.setOnClickListener {
             var email = binding.editEmail.text.toString()
@@ -45,16 +46,27 @@ class MainActivity : AppCompatActivity() {
                     if(task.isSuccessful) {
                         trackLogin()
                         saveData(email, password)
-                        nextActivity()
+                        login()
                     } else {
                         Toast.makeText(this, "Email or password is invalid!", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
+
+        btnRegister.setOnClickListener {
+            register()
+        }
+
+
     }
 
-    private fun nextActivity() {
+    private fun login() {
         val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun register(){
+        val intent = Intent(this, RegisterActivity::class.java)
         startActivity(intent)
     }
 

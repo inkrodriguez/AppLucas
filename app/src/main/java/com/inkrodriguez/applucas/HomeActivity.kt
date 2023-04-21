@@ -64,7 +64,6 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
             throw RuntimeException("Test Crash") // Force a crash
         }
 
-
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -107,6 +106,10 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 100
+    }
+
+    fun updateLastPosition(){
+
     }
 
 
