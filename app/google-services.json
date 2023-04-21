@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "44628753943",
+    "project_id": "applucas-8087f",
+    "storage_bucket": "applucas-8087f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44628753943:android:d1cbbf7e7c10f686186652",
+        "android_client_info": {
+          "package_name": "com.inkrodriguez.applucas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44628753943-38le9r5ipe7lhtcpi95u5mvvgu84j6pc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoeuiCAMYiG5O7Fbjynpxpeit9Pu9rbHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "44628753943-38le9r5ipe7lhtcpi95u5mvvgu84j6pc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
