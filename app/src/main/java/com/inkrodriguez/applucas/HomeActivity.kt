@@ -3,8 +3,9 @@ package com.inkrodriguez.applucas
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -13,9 +14,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.ktx.Firebase
 import com.inkrodriguez.applucas.MainActivity.Companion.PREFS_KEY
 import com.inkrodriguez.applucas.databinding.ActivityHomeBinding
 
@@ -23,6 +23,7 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var googleMap: GoogleMap
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onStart() {
         super.onStart()
@@ -42,17 +43,26 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
         val sharedPref = getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
         val email = sharedPref.getString("email", "")
         val password = sharedPref.getString("password", "")
+        val btnTestCrashlytics = binding.btnTestCrashlytics
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
 
-        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-            FirebaseCrashlytics.getInstance().recordException(throwable)
+        try {
+            // código que pode gerar exceções
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
 
+
+        btnTestCrashlytics?.setOnClickListener {
+            throw RuntimeException("Test Crash") // Force a crash
+        }
 
 
     }
@@ -73,15 +83,18 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                         .title("My Location")
                     googleMap.addMarker(markerOptions)
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
+
+                    // Aqui você pode enviar um evento de rastreamento de renderização
+                    val params = Bundle()
+                    params.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "map")
+                    params.putString(FirebaseAnalytics.Param.ITEM_ID, "map_rendered")
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, params)
                 }
             }
         }
-
-        val analytics = Firebase.analytics
-        val bundle = Bundle()
-        bundle.putString("event_name", "map_rendered_successfully")
-        analytics.logEvent("map_rendered", bundle)
     }
+
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.widget.Toast
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import com.inkrodriguez.applucas.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -16,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var binding: ActivityMainBinding
     private lateinit var preferences: SharedPreferences
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     companion object {
         const val PREFS_KEY = "myPrefs"
@@ -30,7 +31,8 @@ class MainActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+
+        val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
 
         var btnLogin = binding.btnLogin
 
@@ -41,15 +43,9 @@ class MainActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if(task.isSuccessful) {
-                        // Save user data and navigate to next activity
+                        trackLogin()
                         saveData(email, password)
                         nextActivity()
-
-                        // Log the login event with Firebase Analytics
-                        val bundle = Bundle().apply {
-                            putString(FirebaseAnalytics.Param.METHOD, email)
-                        }
-                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
                     } else {
                         Toast.makeText(this, "Email or password is invalid!", Toast.LENGTH_SHORT).show()
                     }
@@ -70,4 +66,12 @@ class MainActivity : AppCompatActivity() {
             apply()
         }
     }
+
+    private fun trackLogin(){
+        val params = Bundle()
+        params.putString(FirebaseAnalytics.Param.METHOD, "email")
+        Firebase.analytics.logEvent(FirebaseAnalytics.Event.LOGIN, params)
+    }
+
+
 }
