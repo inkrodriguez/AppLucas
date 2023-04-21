@@ -13,8 +13,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.inkrodriguez.applucas.MainActivity.Companion.PREFS_KEY
 import com.inkrodriguez.applucas.databinding.ActivityHomeBinding
@@ -37,6 +37,7 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.hide()
 
         val sharedPref = getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
         val email = sharedPref.getString("email", "")
@@ -44,6 +45,16 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            FirebaseCrashlytics.getInstance().recordException(throwable)
+        }
+
+
+
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -65,6 +76,11 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+
+        val analytics = Firebase.analytics
+        val bundle = Bundle()
+        bundle.putString("event_name", "map_rendered_successfully")
+        analytics.logEvent("map_rendered", bundle)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
