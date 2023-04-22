@@ -4,8 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
@@ -62,8 +60,7 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         btnTestCrashlytics?.setOnClickListener {
-
-            //throw RuntimeException("Test Crash") // Force a crash
+            throw RuntimeException("Test Crash") // Force a crash
         }
 
     }

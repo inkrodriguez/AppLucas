@@ -1,15 +1,20 @@
 package com.inkrodriguez.applucas
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.ktx.Firebase
 import com.inkrodriguez.applucas.databinding.ActivityMainBinding
 
@@ -49,6 +54,22 @@ class MainActivity : AppCompatActivity() {
                         login()
                     } else {
                         Toast.makeText(this, "Email or password is invalid!", Toast.LENGTH_SHORT).show()
+                    }
+                }.addOnFailureListener { exception ->
+                    when(exception) {
+                        is FirebaseAuthInvalidUserException -> {
+                            Toast.makeText(this, "Invalid user!", Toast.LENGTH_SHORT).show()
+                        }
+                        is FirebaseAuthInvalidCredentialsException -> {
+                            Toast.makeText(this, "Invalid email or password!", Toast.LENGTH_SHORT).show()
+                        }
+                        is FirebaseNetworkException -> {
+                            Toast.makeText(this, "No network available!", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Toast.makeText(this, "Authentication failed!", Toast.LENGTH_SHORT).show()
+                            Log.e(TAG, "signInWithEmailAndPassword failed", exception)
+                        }
                     }
                 }
         }
