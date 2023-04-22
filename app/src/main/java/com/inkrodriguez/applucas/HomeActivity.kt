@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
@@ -61,10 +62,12 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         btnTestCrashlytics?.setOnClickListener {
-            throw RuntimeException("Test Crash") // Force a crash
+
+            //throw RuntimeException("Test Crash") // Force a crash
         }
 
     }
+
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
@@ -82,8 +85,12 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                         .title("My Location")
                     googleMap.addMarker(markerOptions)
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
+                    
+                    //Aqui eu pego a última localização do usuário
+                    binding.latitude?.text = "Latitude: ${location.latitude}"
+                    binding.longitude?.text = "Longitude: ${location.longitude}"
 
-                    // Aqui você pode enviar um evento de rastreamento de renderização
+                    // Aqui envio um evento de rastreamento de renderização
                     val params = Bundle()
                     params.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "map")
                     params.putString(FirebaseAnalytics.Param.ITEM_ID, "map_rendered")
@@ -107,10 +114,5 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 100
     }
-
-    fun updateLastPosition(){
-
-    }
-
 
 }
